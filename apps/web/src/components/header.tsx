@@ -20,7 +20,7 @@ export function Header() {
                         <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-brand-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm transition-transform group-hover:scale-110">
                             A
                         </div>
-                        <span className="text-xl font-bold text-gradient">Anandibi</span>
+                        <span className="text-xl font-bold text-gradient">Aanandini</span>
                     </Link>
 
                     {/* Desktop Nav */}

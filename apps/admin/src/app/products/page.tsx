@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/providers/auth-provider';
 import { AdminShell } from '@/components/admin-shell';
-import { Button } from '@anandibi/ui';
+import { Button } from '@aanandini/ui';
 import * as api from '@/lib/api';
 import { Plus, Pencil, Trash2, Search } from 'lucide-react';
 

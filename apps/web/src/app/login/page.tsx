@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Button, Input } from '@anandibi/ui';
+import { Button, Input } from '@aanandini/ui';
 import { useAuth } from '@/providers/auth-provider';
 import { LogIn } from 'lucide-react';
 
@@ -42,7 +42,7 @@ export default function LoginPage() {
                         A
                     </div>
                     <h1 className="text-2xl font-bold text-slate-900">Welcome Back</h1>
-                    <p className="text-slate-500 mt-1">Sign in to your Anandibi account</p>
+                    <p className="text-slate-500 mt-1">Sign in to your Aanandini account</p>
                 </div>
 
                 <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8">

@@ -1,6 +1,10 @@
 generator client {
   provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
 }
+
+// Load env vars from monorepo root
+// Prisma resolves this relative to the schema file location
 
 datasource db {
   provider = "postgresql"

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { ShoppingCart, Star, ArrowLeft, Check } from 'lucide-react';
-import { Button } from '@anandibi/ui';
+import { Button } from '@aanandini/ui';
 import { useCart } from '@/providers/cart-provider';
 import * as api from '@/lib/api';
 
@@ -116,8 +116,8 @@ export default function ProductDetailPage() {
                                         key={idx}
                                         onClick={() => setSelectedImage(idx)}
                                         className={`shrink-0 h-20 w-20 rounded-lg overflow-hidden border-2 transition-all ${selectedImage === idx
-                                                ? 'border-brand-500 ring-2 ring-brand-200'
-                                                : 'border-slate-200 hover:border-slate-300'
+                                            ? 'border-brand-500 ring-2 ring-brand-200'
+                                            : 'border-slate-200 hover:border-slate-300'
                                             }`}
                                     >
                                         <img src={img} alt="" className="h-full w-full object-cover" />
@@ -149,8 +149,8 @@ export default function ProductDetailPage() {
                                                 <Star
                                                     key={star}
                                                     className={`h-4 w-4 ${star <= avg
-                                                            ? 'fill-amber-400 text-amber-400'
-                                                            : 'text-slate-300'
+                                                        ? 'fill-amber-400 text-amber-400'
+                                                        : 'text-slate-300'
                                                         }`}
                                                 />
                                             );
@@ -232,8 +232,8 @@ export default function ProductDetailPage() {
                                                 <Star
                                                     key={star}
                                                     className={`h-3.5 w-3.5 ${star <= review.rating
-                                                            ? 'fill-amber-400 text-amber-400'
-                                                            : 'text-slate-300'
+                                                        ? 'fill-amber-400 text-amber-400'
+                                                        : 'text-slate-300'
                                                         }`}
                                                 />
                                             ))}

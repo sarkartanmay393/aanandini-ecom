@@ -25,15 +25,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
 
     useEffect(() => {
-        const token = localStorage.getItem('anandibi_token');
-        const userStr = localStorage.getItem('anandibi_user');
+        const token = localStorage.getItem('aanandini_token');
+        const userStr = localStorage.getItem('aanandini_user');
         if (token && userStr) {
             try {
                 const user = JSON.parse(userStr);
                 setState({ user, token, isLoading: false });
             } catch {
-                localStorage.removeItem('anandibi_token');
-                localStorage.removeItem('anandibi_user');
+                localStorage.removeItem('aanandini_token');
+                localStorage.removeItem('aanandini_user');
                 setState({ user: null, token: null, isLoading: false });
             }
         } else {
@@ -43,21 +43,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const loginFn = useCallback(async (email: string, password: string) => {
         const res = await api.login({ email, password });
-        localStorage.setItem('anandibi_token', res.accessToken);
-        localStorage.setItem('anandibi_user', JSON.stringify(res.user));
+        localStorage.setItem('aanandini_token', res.accessToken);
+        localStorage.setItem('aanandini_user', JSON.stringify(res.user));
         setState({ user: res.user, token: res.accessToken, isLoading: false });
     }, []);
 
     const registerFn = useCallback(async (name: string, email: string, password: string) => {
         const res = await api.register({ name, email, password });
-        localStorage.setItem('anandibi_token', res.accessToken);
-        localStorage.setItem('anandibi_user', JSON.stringify(res.user));
+        localStorage.setItem('aanandini_token', res.accessToken);
+        localStorage.setItem('aanandini_user', JSON.stringify(res.user));
         setState({ user: res.user, token: res.accessToken, isLoading: false });
     }, []);
 
     const logout = useCallback(() => {
-        localStorage.removeItem('anandibi_token');
-        localStorage.removeItem('anandibi_user');
+        localStorage.removeItem('aanandini_token');
+        localStorage.removeItem('aanandini_user');
         setState({ user: null, token: null, isLoading: false });
     }, []);
 

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { ArrowRight, Sparkles, Truck, Shield } from 'lucide-react';
-import { Button } from '@anandibi/ui';
+import { Button } from '@aanandini/ui';
 import { ProductCard } from '@/components/product-card';
 import { useEffect, useState } from 'react';
 import * as api from '@/lib/api';
@@ -38,7 +38,7 @@ export default function HomePage() {
                         </h1>
                         <p className="mt-6 text-lg text-slate-300 leading-relaxed max-w-lg">
                             Curated collections of premium products delivered to your doorstep. Experience shopping
-                            redefined with Anandibi.
+                            redefined with Aanandini.
                         </p>
                         <div className="mt-8 flex flex-col sm:flex-row gap-4">
                             <Link href="/products">

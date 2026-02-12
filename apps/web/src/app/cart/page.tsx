@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { Minus, Plus, Trash2, ShoppingBag, ArrowLeft } from 'lucide-react';
-import { Button } from '@anandibi/ui';
+import { Button } from '@aanandini/ui';
 import { useCart } from '@/providers/cart-provider';
 
 export default function CartPage() {

@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/providers/auth-provider';
 import { AdminShell } from '@/components/admin-shell';
-import { Button, Input } from '@anandibi/ui';
+import { Button, Input } from '@aanandini/ui';
 import * as api from '@/lib/api';
 import { ArrowLeft, Save } from 'lucide-react';
 import Link from 'next/link';

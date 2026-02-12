@@ -37,7 +37,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
                             A
                         </div>
                         <div>
-                            <div className="font-bold text-sm">Anandibi</div>
+                            <div className="font-bold text-sm">Aanandini</div>
                             <div className="text-xs text-slate-400 flex items-center gap-1">
                                 <Shield className="h-3 w-3" /> Admin Panel
                             </div>

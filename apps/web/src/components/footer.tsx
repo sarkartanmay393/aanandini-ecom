@@ -11,7 +11,7 @@ export function Footer() {
                             <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-brand-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm">
                                 A
                             </div>
-                            <span className="text-lg font-bold text-white">Anandibi</span>
+                            <span className="text-lg font-bold text-white">Aanandini</span>
                         </div>
                         <p className="text-sm leading-relaxed">
                             Your premium destination for curated products. Quality meets convenience.
@@ -76,7 +76,7 @@ export function Footer() {
                 </div>
 
                 <div className="mt-10 pt-8 border-t border-slate-800 text-center text-sm">
-                    © {new Date().getFullYear()} Anandibi. All rights reserved.
+                    © {new Date().getFullYear()} Aanandini. All rights reserved.
                 </div>
             </div>
         </footer>

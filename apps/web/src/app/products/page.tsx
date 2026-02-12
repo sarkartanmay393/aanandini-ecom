@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Search, SlidersHorizontal, ChevronDown } from 'lucide-react';
-import { Input } from '@anandibi/ui';
+import { Input } from '@aanandini/ui';
 import { ProductCard } from '@/components/product-card';
 import * as api from '@/lib/api';
 

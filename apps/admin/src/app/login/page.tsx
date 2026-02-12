@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Button, Input } from '@anandibi/ui';
+import { Button, Input } from '@aanandini/ui';
 import { useAuth } from '@/providers/auth-provider';
 import { Shield } from 'lucide-react';
 

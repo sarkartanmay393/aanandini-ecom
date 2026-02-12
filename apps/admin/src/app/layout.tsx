@@ -3,8 +3,8 @@ import './globals.css';
 import { Providers } from './providers';
 
 export const metadata: Metadata = {
-    title: 'Anandibi Admin',
-    description: 'Admin panel for managing the Anandibi store.',
+    title: 'Aanandini Admin',
+    description: 'Admin panel for managing the Aanandini store.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

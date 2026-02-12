@@ -11,7 +11,7 @@ import { RolesGuard } from './guards/roles.guard';
     imports: [
         PassportModule.register({ defaultStrategy: 'jwt' }),
         JwtModule.register({
-            secret: process.env.JWT_SECRET || 'anandibi-secret-change-in-production',
+            secret: process.env.JWT_SECRET || 'aanandini-secret-change-in-production',
             signOptions: { expiresIn: '7d' },
         }),
     ],

@@ -24,8 +24,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
 
     useEffect(() => {
-        const token = localStorage.getItem('anandibi_admin_token');
-        const userStr = localStorage.getItem('anandibi_admin_user');
+        const token = localStorage.getItem('aanandini_admin_token');
+        const userStr = localStorage.getItem('aanandini_admin_user');
         if (token && userStr) {
             try {
                 const user = JSON.parse(userStr);
@@ -33,13 +33,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     setState({ user, token, isLoading: false });
                 } else {
                     // Non-admin user — clear storage
-                    localStorage.removeItem('anandibi_admin_token');
-                    localStorage.removeItem('anandibi_admin_user');
+                    localStorage.removeItem('aanandini_admin_token');
+                    localStorage.removeItem('aanandini_admin_user');
                     setState({ user: null, token: null, isLoading: false });
                 }
             } catch {
-                localStorage.removeItem('anandibi_admin_token');
-                localStorage.removeItem('anandibi_admin_user');
+                localStorage.removeItem('aanandini_admin_token');
+                localStorage.removeItem('aanandini_admin_user');
                 setState({ user: null, token: null, isLoading: false });
             }
         } else {
@@ -52,14 +52,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (res.user.role !== 'ADMIN') {
             throw new Error('Access denied. Admin accounts only.');
         }
-        localStorage.setItem('anandibi_admin_token', res.accessToken);
-        localStorage.setItem('anandibi_admin_user', JSON.stringify(res.user));
+        localStorage.setItem('aanandini_admin_token', res.accessToken);
+        localStorage.setItem('aanandini_admin_user', JSON.stringify(res.user));
         setState({ user: res.user, token: res.accessToken, isLoading: false });
     }, []);
 
     const logout = useCallback(() => {
-        localStorage.removeItem('anandibi_admin_token');
-        localStorage.removeItem('anandibi_admin_user');
+        localStorage.removeItem('aanandini_admin_token');
+        localStorage.removeItem('aanandini_admin_user');
         setState({ user: null, token: null, isLoading: false });
     }, []);
 

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { ShoppingCart } from 'lucide-react';
-import { Button } from '@anandibi/ui';
+import { Button } from '@aanandini/ui';
 import { useCart } from '@/providers/cart-provider';
 import type { Product } from '@/lib/api';
 

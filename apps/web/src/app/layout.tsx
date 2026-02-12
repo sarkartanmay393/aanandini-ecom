@@ -5,9 +5,9 @@ import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
 
 export const metadata: Metadata = {
-    title: 'Anandibi — Premium E-Commerce',
+    title: 'Aanandini — Premium E-Commerce',
     description:
-        'Discover curated products at Anandibi. Quality meets convenience in our premium online store.',
+        'Discover curated products at Aanandini. Quality meets convenience in our premium online store.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -4,7 +4,7 @@ set -euo pipefail
 #──────────────────────────────────────────────────────────────
 # Portable E-Commerce Machine — White-Label Rebranding Script
 #──────────────────────────────────────────────────────────────
-# This script replaces all "Anandibi" / "anandibi" branding
+# This script replaces all "Aanandini" / "aanandini" branding
 # references with your own business name. It is safe to run
 # multiple times (idempotent on the current brand name).
 #──────────────────────────────────────────────────────────────
@@ -82,24 +82,24 @@ replace_in_files() {
 # ── Execute replacements ─────────────────────────────────────
 
 echo ""
-echo "1/5 Replacing package scope @anandibi/ → @${BRAND_SLUG}/ ..."
-replace_in_files "@anandibi/" "@${BRAND_SLUG}/"
+echo "1/5 Replacing package scope @aanandini/ → @${BRAND_SLUG}/ ..."
+replace_in_files "@aanandini/" "@${BRAND_SLUG}/"
 
 echo ""
-echo "2/5 Replacing display name 'Anandibi' → '${BRAND_NAME}' ..."
-replace_in_files "Anandibi" "$BRAND_NAME"
+echo "2/5 Replacing display name 'Aanandini' → '${BRAND_NAME}' ..."
+replace_in_files "Aanandini" "$BRAND_NAME"
 
 echo ""
-echo "3/5 Replacing localStorage keys 'anandibi_' → '${BRAND_UNDERSCORE}_' ..."
-replace_in_files "anandibi_" "${BRAND_UNDERSCORE}_"
+echo "3/5 Replacing localStorage keys 'aanandini_' → '${BRAND_UNDERSCORE}_' ..."
+replace_in_files "aanandini_" "${BRAND_UNDERSCORE}_"
 
 echo ""
-echo "4/5 Replacing root package name 'anandibi' → '${BRAND_SLUG}' ..."
-replace_in_files "\"anandibi\"" "\"${BRAND_SLUG}\""
+echo "4/5 Replacing root package name 'aanandini' → '${BRAND_SLUG}' ..."
+replace_in_files "\"aanandini\"" "\"${BRAND_SLUG}\""
 
 echo ""
 echo "5/5 Replacing JWT fallback secret ..."
-replace_in_files "anandibi-secret-change-in-production" "${BRAND_SLUG}-secret-change-in-production"
+replace_in_files "aanandini-secret-change-in-production" "${BRAND_SLUG}-secret-change-in-production"
 
 # ── Update tagline in hero section ───────────────────────────
 

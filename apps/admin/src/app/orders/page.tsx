@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/providers/auth-provider';
 import { AdminShell } from '@/components/admin-shell';
-import { Button } from '@anandibi/ui';
+import { Button } from '@aanandini/ui';
 import * as api from '@/lib/api';
 import { Search } from 'lucide-react';
 

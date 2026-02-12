@@ -1,12 +1,12 @@
 services:
   postgres:
     image: postgres:15-alpine
-    container_name: anandibi-postgres
+    container_name: aanandini-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_USER: anandibi
-      POSTGRES_PASSWORD: anandibi_secret
-      POSTGRES_DB: anandibi
+      POSTGRES_USER: aanandini
+      POSTGRES_PASSWORD: aanandini_secret
+      POSTGRES_DB: aanandini
     ports:
       - '5432:5432'
     volumes:

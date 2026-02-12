@@ -28,12 +28,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
     // Hydrate from localStorage
     useEffect(() => {
-        const stored = localStorage.getItem('anandibi_cart');
+        const stored = localStorage.getItem('aanandini_cart');
         if (stored) {
             try {
                 setItems(JSON.parse(stored));
             } catch {
-                localStorage.removeItem('anandibi_cart');
+                localStorage.removeItem('aanandini_cart');
             }
         }
         setHydrated(true);
@@ -42,7 +42,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     // Persist to localStorage
     useEffect(() => {
         if (hydrated) {
-            localStorage.setItem('anandibi_cart', JSON.stringify(items));
+            localStorage.setItem('aanandini_cart', JSON.stringify(items));
         }
     }, [items, hydrated]);
 
