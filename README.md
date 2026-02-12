@@ -1,15 +1,22 @@
-# Anandibi — E-Commerce Backend
+# Portable E-Commerce Machine
 
-A Turborepo monorepo with a **NestJS** API, **Prisma** ORM (PostgreSQL), JWT authentication, and role-based access control.
+A **white-label Turborepo monorepo** with a **NestJS** API, **Next.js** customer storefront, **Next.js** admin panel, **Prisma** ORM (PostgreSQL), JWT authentication, and role-based access control.
+
+> **Tip:** Run `bash scripts/rebrand.sh` to personalize this project with your business name.
 
 ## Project Structure
 
 ```
 ├── apps/
-│   └── api/            # NestJS REST API
+│   ├── api/            # NestJS REST API (port 3000)
+│   ├── web/            # Next.js customer storefront (port 3001)
+│   └── admin/          # Next.js admin panel (port 3002)
 ├── packages/
 │   ├── config/         # Shared ESLint & TypeScript configs
-│   └── db/             # Prisma schema & client
+│   ├── db/             # Prisma schema & client
+│   └── ui/             # Shared UI components (Button, Input, Card)
+├── scripts/
+│   └── rebrand.sh      # White-label rebranding script
 ├── docker-compose.yml  # PostgreSQL for local dev
 └── turbo.json          # Turborepo pipeline
 ```
@@ -25,7 +32,7 @@ A Turborepo monorepo with a **NestJS** API, **Prisma** ORM (PostgreSQL), JWT aut
 ### 1. Clone & install
 
 ```bash
-git clone <repo-url> && cd anandibi
+git clone <repo-url> && cd portable-ecom-machine
 npm install
 ```
 
@@ -51,13 +58,25 @@ npx prisma migrate dev --name init
 cd ../..
 ```
 
-### 5. Run the API
+### 5. Run all apps in development
 
 ```bash
 npm run dev
 ```
 
-The API will be available at **http://localhost:3000**.
+This starts all three apps via Turborepo:
+
+| App   | URL                    | Description               |
+|-------|------------------------|---------------------------|
+| API   | http://localhost:3000   | NestJS backend            |
+| Web   | http://localhost:3001   | Customer storefront       |
+| Admin | http://localhost:3002   | Admin management panel    |
+
+### 6. Build for production
+
+```bash
+npm run build
+```
 
 ## API Endpoints
 
@@ -79,17 +98,6 @@ The API will be available at **http://localhost:3000**.
 | PUT    | `/products/:id`  | Admin | Update product                   |
 | DELETE | `/products/:id`  | Admin | Delete product                   |
 
-**Query parameters** for `GET /products`:
-
-| Param        | Type   | Description                |
-|--------------|--------|----------------------------|
-| `search`     | string | Search name & description  |
-| `categoryId` | string | Filter by category         |
-| `minPrice`   | number | Minimum price              |
-| `maxPrice`   | number | Maximum price              |
-| `page`       | number | Page number (default: 1)   |
-| `limit`      | number | Items per page (default: 10)|
-
 ### Categories
 
 | Method | Endpoint           | Auth  | Description       |
@@ -100,11 +108,29 @@ The API will be available at **http://localhost:3000**.
 | PUT    | `/categories/:id`  | Admin | Update category   |
 | DELETE | `/categories/:id`  | Admin | Delete category   |
 
+### Orders (Admin Only)
+
+| Method | Endpoint              | Auth  | Description           |
+|--------|-----------------------|-------|-----------------------|
+| GET    | `/orders`             | Admin | List all orders       |
+| GET    | `/orders/:id`         | Admin | Get order details     |
+| PUT    | `/orders/:id/status`  | Admin | Update order status   |
+| GET    | `/orders/stats`       | Admin | Dashboard statistics  |
+
 ## Tech Stack
 
 - **Runtime**: Node.js + TypeScript
-- **Framework**: NestJS
+- **Backend**: NestJS + Passport + JWT + bcrypt
+- **Frontend**: Next.js 14 (App Router) + Tailwind CSS
 - **ORM**: Prisma
 - **Database**: PostgreSQL
-- **Auth**: Passport + JWT + bcrypt
+- **UI Library**: Shadcn/UI-based shared components
 - **Monorepo**: Turborepo with npm workspaces
+
+## White-Label Rebranding
+
+```bash
+bash scripts/rebrand.sh
+```
+
+The script will prompt for your business name and tagline, then automatically update all branding references across the codebase.
