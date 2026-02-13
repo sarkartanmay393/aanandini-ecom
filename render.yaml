@@ -4,7 +4,6 @@ databases:
     user: aanandini
     plan: free # Note: Free tier DBs expire after 90 days on Render
     region: singapore # Match service region
-    version: "16"
 
 services:
   # --------------------------------------------------------------------------------
