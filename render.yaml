@@ -79,3 +79,5 @@ envVarGroups:
         placeholder: true
       - key: AWS_SECRET_ACCESS_KEY
         placeholder: true
+      - key: NODE_ENV
+        placeholder: true
