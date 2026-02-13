@@ -6,8 +6,7 @@ import * as path from 'path';
 @Injectable()
 export class StorageService {
     private readonly logger = new Logger(StorageService.name);
-    private readonly isProd = false;
-    //  process.env.NODE_ENV === 'production';
+    private readonly isProd = process.env.NODE_ENV === 'production';
     private s3?: S3Client;
     private bucket?: string;
 

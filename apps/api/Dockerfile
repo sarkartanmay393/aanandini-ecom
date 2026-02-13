@@ -38,6 +38,9 @@ COPY --from=installer --chown=nestjs:nodejs /app/packages/db/prisma ./prisma
 # Re-create workspace symlink (Docker COPY can't follow cross-directory symlinks)
 RUN rm -rf node_modules/@aanandini/db && ln -s /app/packages/db node_modules/@aanandini/db
 
+# Create uploads dir in case S3 is not configured
+RUN mkdir -p /app/uploads && chown nestjs:nodejs /app/uploads
+
 USER nestjs
 
 EXPOSE 3000
