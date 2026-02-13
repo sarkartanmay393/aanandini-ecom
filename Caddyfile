@@ -1,0 +1,15 @@
+{
+    email your-email@example.com
+}
+
+api.example.com {
+    reverse_proxy api:3000
+}
+
+admin.example.com {
+    reverse_proxy admin:3000
+}
+
+example.com {
+    reverse_proxy web:3000
+}

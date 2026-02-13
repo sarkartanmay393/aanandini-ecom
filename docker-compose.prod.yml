@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    restart: always
+    env_file: .env.production
+    networks:
+      - aanandini-network
+
+  admin:
+    build:
+      context: .
+      dockerfile: apps/admin/Dockerfile
+    restart: always
+    env_file: .env.production
+    networks:
+      - aanandini-network
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    restart: always
+    env_file: .env.production
+    networks:
+      - aanandini-network
+
+  proxy:
+    image: caddy:alpine
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - aanandini-network
+    depends_on:
+      - api
+      - admin
+      - web
+
+networks:
+  aanandini-network:
+    driver: bridge
+
+volumes:
+  caddy_data:
+  caddy_config:
