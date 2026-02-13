@@ -22,15 +22,15 @@ services:
           name: aanandini-db
           property: connectionString
       - key: JWT_SECRET
-        fromGroup: shared-secrets
+        value: development
       - key: AWS_S3_BUCKET
-        fromGroup: shared-secrets
+        value: development
       - key: AWS_REGION
-        fromGroup: shared-secrets
+        value: development
       - key: AWS_ACCESS_KEY_ID
-        fromGroup: shared-secrets
+        value: development
       - key: AWS_SECRET_ACCESS_KEY
-        fromGroup: shared-secrets
+        value: development
       - key: NODE_ENV
         value: development
 
@@ -64,25 +64,4 @@ services:
       - key: NEXT_PUBLIC_API_URL
         value: https://aanandini-api.onrender.com
       - key: NODE_ENV
-        value: development
-
-envVarGroups:
-  - name: shared-secrets
-    envVars:
-      - key: JWT_SECRET
-        generateValue: true
-      - key: AWS_S3_BUCKET
-        placeholder: true
-        value: development
-      - key: AWS_REGION
-        placeholder: true
-        value: development
-      - key: AWS_ACCESS_KEY_ID
-        placeholder: true
-        value: development
-      - key: AWS_SECRET_ACCESS_KEY
-        placeholder: true
-        value: development
-      - key: NODE_ENV
-        placeholder: true
         value: development
