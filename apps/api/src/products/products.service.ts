@@ -106,4 +106,23 @@ export class ProductsService {
             where: { id },
         });
     }
+
+    async bulkCreate(items: CreateProductDto[]) {
+        const results = [];
+        for (const item of items) {
+            const product = await this.prisma.product.create({
+                data: {
+                    name: item.name,
+                    description: item.description,
+                    price: item.price,
+                    stock: item.stock,
+                    images: item.images || [],
+                    categoryId: item.categoryId,
+                },
+                include: { category: true },
+            });
+            results.push(product);
+        }
+        return { created: results.length, products: results };
+    }
 }

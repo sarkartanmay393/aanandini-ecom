@@ -33,6 +33,13 @@ export class ProductsController {
 
     // ── Admin-Protected ─────────────────────────────────────────
 
+    @Post('bulk')
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles('ADMIN')
+    bulkCreate(@Body() items: CreateProductDto[]) {
+        return this.productsService.bulkCreate(items);
+    }
+
     @Post()
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles('ADMIN')

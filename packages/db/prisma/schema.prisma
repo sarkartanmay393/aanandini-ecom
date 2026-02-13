@@ -1,10 +1,6 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "../node_modules/.prisma/client"
 }
-
-// Load env vars from monorepo root
-// Prisma resolves this relative to the schema file location
 
 datasource db {
   provider = "postgresql"
@@ -18,22 +14,52 @@ enum Role {
 
 enum OrderStatus {
   PENDING
+  PROCESSING
   SHIPPED
   DELIVERED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
 }
 
 model User {
-  id        String   @id @default(uuid())
-  name      String
-  email     String   @unique
-  password  String
-  role      Role     @default(CUSTOMER)
+  id        String    @id @default(uuid())
+  name      String    @default("")
+  email     String?   @unique
+  phone     String?   @unique
+  password  String?
+  googleId  String?   @unique
+  role      Role      @default(CUSTOMER)
   orders    Order[]
   reviews   Review[]
+  addresses Address[]
+  wishlist  Wishlist[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@map("users")
+}
+
+model Address {
+  id        String   @id @default(uuid())
+  label     String   @default("Home")
+  street    String
+  city      String
+  state     String
+  pincode   String
+  phone     String
+  isDefault Boolean  @default(false)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  orders    Order[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@map("users")
+  @@map("addresses")
 }
 
 model Category {
@@ -54,10 +80,12 @@ model Product {
   price       Float
   stock       Int         @default(0)
   images      String[]
+  videos      String[]
   categoryId  String
   category    Category    @relation(fields: [categoryId], references: [id])
   orderItems  OrderItem[]
   reviews     Review[]
+  wishlist    Wishlist[]
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 
@@ -65,14 +93,18 @@ model Product {
 }
 
 model Order {
-  id        String      @id @default(uuid())
-  status    OrderStatus @default(PENDING)
-  total     Float
-  userId    String
-  user      User        @relation(fields: [userId], references: [id])
-  items     OrderItem[]
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
+  id                String        @id @default(uuid())
+  status            OrderStatus   @default(PENDING)
+  paymentStatus     PaymentStatus @default(PENDING)
+  paymentId         String?
+  total             Float
+  userId            String
+  user              User          @relation(fields: [userId], references: [id])
+  shippingAddressId String?
+  shippingAddress   Address?      @relation(fields: [shippingAddressId], references: [id])
+  items             OrderItem[]
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
 
   @@map("orders")
 }
@@ -82,7 +114,7 @@ model OrderItem {
   quantity  Int
   price     Float
   orderId   String
-  order     Order   @relation(fields: [orderId], references: [id])
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
   productId String
   product   Product @relation(fields: [productId], references: [id])
 
@@ -101,4 +133,28 @@ model Review {
   updatedAt DateTime @updatedAt
 
   @@map("reviews")
+}
+
+model Wishlist {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@unique([userId, productId])
+  @@map("wishlists")
+}
+
+model Otp {
+  id        String   @id @default(uuid())
+  phone     String
+  code      String
+  verified  Boolean  @default(false)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([phone, code])
+  @@map("otps")
 }

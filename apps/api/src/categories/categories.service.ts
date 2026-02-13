@@ -66,4 +66,21 @@ export class CategoriesService {
             where: { id },
         });
     }
+
+    async bulkCreate(items: CreateCategoryDto[]) {
+        const results = [];
+        const skipped = [];
+        for (const item of items) {
+            const existing = await this.prisma.category.findUnique({
+                where: { slug: item.slug },
+            });
+            if (existing) {
+                skipped.push(item.slug);
+                continue;
+            }
+            const category = await this.prisma.category.create({ data: item });
+            results.push(category);
+        }
+        return { created: results.length, skipped: skipped.length, categories: results };
+    }
 }

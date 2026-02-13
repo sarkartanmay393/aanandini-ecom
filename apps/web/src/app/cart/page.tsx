@@ -1,12 +1,16 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Minus, Plus, Trash2, ShoppingBag, ArrowLeft } from 'lucide-react';
 import { Button } from '@aanandini/ui';
 import { useCart } from '@/providers/cart-provider';
+import { useAuth } from '@/providers/auth-provider';
 
 export default function CartPage() {
     const { items, totalItems, totalPrice, removeItem, updateQuantity, clearCart } = useCart();
+    const { user } = useAuth();
+    const router = useRouter();
 
     if (items.length === 0) {
         return (
@@ -30,27 +34,27 @@ export default function CartPage() {
     }
 
     return (
-        <div className="animate-fade-in">
-            <div className="bg-white border-b border-slate-200">
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-                    <h1 className="text-3xl font-bold text-slate-900">Shopping Cart</h1>
-                    <p className="mt-2 text-slate-500">
-                        {totalItems} item{totalItems !== 1 && 's'} in your cart
+        <div className="animate-fade-in min-h-[70vh]">
+            <div className="bg-stone-50 border-b border-stone-200">
+                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 text-center">
+                    <h1 className="text-4xl font-serif text-stone-900 mb-2">Shopping Bag</h1>
+                    <p className="text-stone-500 text-sm tracking-widest uppercase">
+                        {totalItems} item{totalItems !== 1 && 's'} strictly curated for you
                     </p>
                 </div>
             </div>
 
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
                     {/* Cart Items */}
-                    <div className="lg:col-span-2 space-y-4">
+                    <div className="lg:col-span-8 space-y-8">
                         {items.map((item) => (
                             <div
                                 key={item.id}
-                                className="bg-white rounded-xl border border-slate-200 p-4 sm:p-6 flex gap-4 sm:gap-6 animate-scale-in"
+                                className="flex gap-6 sm:gap-8 pb-8 border-b border-stone-100 last:border-0 animate-slide-up"
                             >
                                 {/* Image */}
-                                <div className="shrink-0 h-24 w-24 sm:h-28 sm:w-28 rounded-lg bg-gradient-to-br from-slate-100 to-slate-200 overflow-hidden">
+                                <div className="shrink-0 h-32 w-24 sm:h-40 sm:w-32 bg-stone-100 relative">
                                     {item.image ? (
                                         <img
                                             src={item.image}
@@ -58,116 +62,140 @@ export default function CartPage() {
                                             className="h-full w-full object-cover"
                                         />
                                     ) : (
-                                        <div className="h-full w-full flex items-center justify-center text-2xl font-bold text-slate-300">
+                                        <div className="h-full w-full flex items-center justify-center text-3xl font-serif text-stone-300">
                                             {item.name.charAt(0)}
                                         </div>
                                     )}
                                 </div>
 
                                 {/* Details */}
-                                <div className="flex-1 min-w-0">
-                                    <Link
-                                        href={`/products/${item.id}`}
-                                        className="font-semibold text-slate-900 hover:text-brand-600 transition-colors line-clamp-1"
-                                    >
-                                        {item.name}
-                                    </Link>
-                                    <p className="text-lg font-bold text-slate-900 mt-1">
-                                        ₹{item.price.toLocaleString()}
-                                    </p>
-
-                                    <div className="flex items-center justify-between mt-4">
-                                        {/* Quantity */}
-                                        <div className="flex items-center gap-0">
-                                            <button
-                                                onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                                                className="h-8 w-8 rounded-l-lg border border-slate-300 flex items-center justify-center text-slate-600 hover:bg-slate-100 transition-colors"
+                                <div className="flex-1 min-w-0 flex flex-col">
+                                    <div className="flex justify-between items-start gap-4">
+                                        <div>
+                                            <Link
+                                                href={`/products/${item.id}`}
+                                                className="font-serif text-xl text-stone-900 hover:text-brand-800 transition-colors block mb-1"
                                             >
-                                                <Minus className="h-3.5 w-3.5" />
-                                            </button>
-                                            <span className="h-8 w-10 border-t border-b border-slate-300 flex items-center justify-center text-sm font-medium text-slate-900">
-                                                {item.quantity}
-                                            </span>
-                                            <button
-                                                onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                                                className="h-8 w-8 rounded-r-lg border border-slate-300 flex items-center justify-center text-slate-600 hover:bg-slate-100 transition-colors"
-                                            >
-                                                <Plus className="h-3.5 w-3.5" />
-                                            </button>
+                                                {item.name}
+                                            </Link>
+                                            <p className="text-lg font-medium text-stone-600">
+                                                ₹{item.price.toLocaleString()}
+                                            </p>
                                         </div>
-
-                                        {/* Remove */}
                                         <button
                                             onClick={() => removeItem(item.id)}
-                                            className="p-2 text-slate-400 hover:text-red-500 transition-colors"
-                                            title="Remove"
+                                            className="text-stone-400 hover:text-red-700 transition-colors p-1"
+                                            title="Remove Item"
                                         >
-                                            <Trash2 className="h-4 w-4" />
+                                            <Trash2 className="h-5 w-5" />
                                         </button>
                                     </div>
-                                </div>
 
-                                {/* Subtotal on desktop */}
-                                <div className="hidden sm:flex flex-col items-end justify-center">
-                                    <span className="text-sm text-slate-500">Subtotal</span>
-                                    <span className="text-lg font-bold text-slate-900">
-                                        ₹{(item.price * item.quantity).toLocaleString()}
-                                    </span>
+                                    <div className="mt-auto pt-4 flex items-center justify-between">
+                                        <div className="flex items-center gap-4">
+                                            <label className="text-xs uppercase tracking-wider text-stone-500">Qty</label>
+                                            <div className="flex items-center border border-stone-200">
+                                                <button
+                                                    onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                                    className="h-8 w-8 flex items-center justify-center text-stone-500 hover:bg-stone-50 transition-colors"
+                                                >
+                                                    <Minus className="h-3 w-3" />
+                                                </button>
+                                                <span className="h-8 w-10 flex items-center justify-center text-sm font-medium text-stone-900">
+                                                    {item.quantity}
+                                                </span>
+                                                <button
+                                                    onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                                    className="h-8 w-8 flex items-center justify-center text-stone-500 hover:bg-stone-50 transition-colors"
+                                                >
+                                                    <Plus className="h-3 w-3" />
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div className="text-right">
+                                            <span className="block text-xs uppercase tracking-wider text-stone-500 mb-1">Total</span>
+                                            <span className="text-lg font-serif font-medium text-stone-900">
+                                                ₹{(item.price * item.quantity).toLocaleString()}
+                                            </span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         ))}
 
                         {/* Clear cart */}
-                        <div className="flex justify-end">
-                            <button
-                                onClick={clearCart}
-                                className="text-sm text-red-500 hover:text-red-700 font-medium transition-colors"
-                            >
-                                Clear Cart
-                            </button>
-                        </div>
+                        {items.length > 0 && (
+                            <div className="flex justify-end pt-4">
+                                <button
+                                    onClick={clearCart}
+                                    className="text-xs uppercase tracking-widest text-stone-400 hover:text-red-700 transition-colors border-b border-transparent hover:border-red-700 pb-0.5"
+                                >
+                                    Clear Shopping Bag
+                                </button>
+                            </div>
+                        )}
                     </div>
 
                     {/* Order Summary */}
-                    <div className="lg:col-span-1">
-                        <div className="bg-white rounded-xl border border-slate-200 p-6 sticky top-24">
-                            <h2 className="text-lg font-semibold text-slate-900 mb-4">Order Summary</h2>
+                    <div className="lg:col-span-4">
+                        <div className="bg-stone-50 p-8 sticky top-24">
+                            <h2 className="text-xl font-serif text-stone-900 mb-6 pb-4 border-b border-stone-200">Order Summary</h2>
 
-                            <div className="space-y-3 mb-6">
+                            <div className="space-y-4 mb-8">
                                 <div className="flex justify-between text-sm">
-                                    <span className="text-slate-500">Subtotal ({totalItems} items)</span>
-                                    <span className="text-slate-900 font-medium">
+                                    <span className="text-stone-600">Subtotal</span>
+                                    <span className="text-stone-900 font-medium">
                                         ₹{totalPrice.toLocaleString()}
                                     </span>
                                 </div>
                                 <div className="flex justify-between text-sm">
-                                    <span className="text-slate-500">Shipping</span>
-                                    <span className="text-emerald-600 font-medium">
-                                        {totalPrice >= 999 ? 'Free' : '₹99'}
+                                    <span className="text-stone-600">Shipping</span>
+                                    <span className="text-emerald-700">
+                                        {totalPrice >= 999 ? 'Complimentary' : '₹99'}
                                     </span>
                                 </div>
-                                <div className="border-t border-slate-200 pt-3 flex justify-between">
-                                    <span className="font-semibold text-slate-900">Total</span>
-                                    <span className="font-bold text-xl text-slate-900">
+                                <div className="border-t border-stone-200 pt-4 flex justify-between items-baseline">
+                                    <span className="font-serif text-lg text-stone-900">Total</span>
+                                    <span className="font-serif text-2xl text-stone-900">
                                         ₹{(totalPrice + (totalPrice >= 999 ? 0 : 99)).toLocaleString()}
                                     </span>
                                 </div>
                             </div>
 
-                            <Button size="lg" className="w-full mb-3">
+                            <Button
+                                size="lg"
+                                className="w-full mb-4 bg-stone-900 hover:bg-brand-900 text-white rounded-none uppercase tracking-widest text-xs font-bold py-4"
+                                onClick={() => router.push(user ? '/checkout' : '/login?redirect=/checkout')}
+                            >
                                 Proceed to Checkout
                             </Button>
-                            <Link href="/products" className="block">
-                                <Button variant="ghost" className="w-full gap-1 text-sm">
-                                    <ArrowLeft className="h-4 w-4" /> Continue Shopping
-                                </Button>
+
+                            <Link href="/products" className="block text-center">
+                                <span className="text-xs uppercase tracking-widest text-stone-500 hover:text-brand-800 transition-colors border-b border-transparent hover:border-brand-800 pb-0.5">
+                                    Continue Shopping
+                                </span>
                             </Link>
 
-                            {totalPrice < 999 && (
-                                <p className="text-xs text-slate-500 mt-4 text-center">
-                                    Add ₹{(999 - totalPrice).toLocaleString()} more for free shipping!
-                                </p>
-                            )}
+                            <div className="mt-8 pt-6 border-t border-stone-200 grid grid-cols-3 gap-2 text-center">
+                                <div className="space-y-2">
+                                    <div className="mx-auto w-8 h-8 rounded-full bg-stone-200 flex items-center justify-center text-stone-500">
+                                        <span className="text-xs">🔒</span>
+                                    </div>
+                                    <p className="text-[0.6rem] uppercase tracking-wide text-stone-500">Secure Payment</p>
+                                </div>
+                                <div className="space-y-2">
+                                    <div className="mx-auto w-8 h-8 rounded-full bg-stone-200 flex items-center justify-center text-stone-500">
+                                        <span className="text-xs">✨</span>
+                                    </div>
+                                    <p className="text-[0.6rem] uppercase tracking-wide text-stone-500">Authentic</p>
+                                </div>
+                                <div className="space-y-2">
+                                    <div className="mx-auto w-8 h-8 rounded-full bg-stone-200 flex items-center justify-center text-stone-500">
+                                        <span className="text-xs">🚚</span>
+                                    </div>
+                                    <p className="text-[0.6rem] uppercase tracking-wide text-stone-500">Fast Delivery</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

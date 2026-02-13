@@ -12,6 +12,7 @@ interface AuthState {
 interface AuthContextType extends AuthState {
     login: (email: string, password: string) => Promise<void>;
     register: (name: string, email: string, password: string) => Promise<void>;
+    loginWithOtp: (phone: string, code: string) => Promise<void>;
     logout: () => void;
 }
 
@@ -41,19 +42,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
     }, []);
 
-    const loginFn = useCallback(async (email: string, password: string) => {
-        const res = await api.login({ email, password });
+    const setAuth = useCallback((res: any) => {
         localStorage.setItem('aanandini_token', res.accessToken);
         localStorage.setItem('aanandini_user', JSON.stringify(res.user));
         setState({ user: res.user, token: res.accessToken, isLoading: false });
     }, []);
 
+    const loginFn = useCallback(async (email: string, password: string) => {
+        const res = await api.login(email, password);
+        setAuth(res);
+    }, [setAuth]);
+
     const registerFn = useCallback(async (name: string, email: string, password: string) => {
-        const res = await api.register({ name, email, password });
-        localStorage.setItem('aanandini_token', res.accessToken);
-        localStorage.setItem('aanandini_user', JSON.stringify(res.user));
-        setState({ user: res.user, token: res.accessToken, isLoading: false });
-    }, []);
+        const res = await api.register(name, email, password);
+        setAuth(res);
+    }, [setAuth]);
+
+    const loginWithOtpFn = useCallback(async (phone: string, code: string) => {
+        const res = await api.verifyOtp(phone, code);
+        setAuth(res);
+    }, [setAuth]);
 
     const logout = useCallback(() => {
         localStorage.removeItem('aanandini_token');
@@ -62,7 +70,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }, []);
 
     return (
-        <AuthContext.Provider value={{ ...state, login: loginFn, register: registerFn, logout }}>
+        <AuthContext.Provider value={{ ...state, login: loginFn, register: registerFn, loginWithOtp: loginWithOtpFn, logout }}>
             {children}
         </AuthContext.Provider>
     );

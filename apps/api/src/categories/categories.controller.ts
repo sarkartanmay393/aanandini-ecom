@@ -28,6 +28,13 @@ export class CategoriesController {
         return this.categoriesService.findOne(id);
     }
 
+    @Post('bulk')
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles('ADMIN')
+    bulkCreate(@Body() items: CreateCategoryDto[]) {
+        return this.categoriesService.bulkCreate(items);
+    }
+
     @Post()
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles('ADMIN')

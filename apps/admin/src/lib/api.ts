@@ -123,6 +123,26 @@ export function getCategories(token: string) {
     return request<Category[]>('/categories', { token });
 }
 
+export function createCategory(token: string, data: { name: string }) {
+    return request<Category>('/categories', {
+        method: 'POST',
+        body: JSON.stringify(data),
+        token,
+    });
+}
+
+export function updateCategory(token: string, id: string, data: { name: string }) {
+    return request<Category>(`/categories/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(data),
+        token,
+    });
+}
+
+export function deleteCategory(token: string, id: string) {
+    return request<void>(`/categories/${id}`, { method: 'DELETE', token });
+}
+
 // ── Orders ─────────────────────────────────────────────────
 
 export interface OrderItem {
@@ -132,13 +152,27 @@ export interface OrderItem {
     product: { id: string; name: string; images: string[] };
 }
 
+export interface OrderAddress {
+    id: string;
+    label: string;
+    street: string;
+    city: string;
+    state: string;
+    pincode: string;
+    phone: string;
+}
+
 export interface Order {
     id: string;
-    status: 'PENDING' | 'SHIPPED' | 'DELIVERED';
+    status: 'PENDING' | 'PROCESSING' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED';
+    paymentStatus: 'PENDING' | 'SUCCESS' | 'FAILED';
+    paymentId?: string;
     total: number;
-    user: { id: string; name: string; email: string };
+    user: { id: string; name: string; email: string; phone?: string };
+    shippingAddress?: OrderAddress;
     items: OrderItem[];
     createdAt: string;
+    updatedAt: string;
 }
 
 export interface OrdersResponse {
@@ -155,12 +189,42 @@ export function getOrders(token: string, query: Record<string, string | number> 
     return request<OrdersResponse>(`/orders${qs ? `?${qs}` : ''}`, { token });
 }
 
+export function getOrder(token: string, id: string) {
+    return request<Order>(`/orders/${id}`, { token });
+}
+
 export function updateOrderStatus(token: string, id: string, status: string) {
     return request<Order>(`/orders/${id}/status`, {
         method: 'PUT',
         body: JSON.stringify({ status }),
         token,
     });
+}
+
+// ── Upload ─────────────────────────────────────────────────
+
+export async function uploadImages(token: string, files: File[]): Promise<string[]> {
+    const formData = new FormData();
+    files.forEach((f) => formData.append('files', f));
+
+    const res = await request<{ urls: string[] }>('/upload/images', {
+        method: 'POST',
+        body: formData,
+        token,
+    });
+    return res.urls;
+}
+
+export async function uploadVideo(token: string, file: File): Promise<string> {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const res = await request<{ url: string }>('/upload/video', {
+        method: 'POST',
+        body: formData,
+        token,
+    });
+    return res.url;
 }
 
 // ── Stats ──────────────────────────────────────────────────

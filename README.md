@@ -58,6 +58,11 @@ npx prisma migrate dev --name init
 cd ../..
 ```
 
+#### 4.5. Apply seed (dummy data to DB)
+```bash
+npm run db:seed -w @aanandini/db
+```
+
 ### 5. Run all apps in development
 
 ```bash
