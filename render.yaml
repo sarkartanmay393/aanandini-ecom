@@ -1,3 +1,11 @@
+databases:
+  - name: aanandini-db
+    databaseName: aanandini
+    user: aanandini
+    plan: free # Note: Free tier DBs expire after 90 days on Render
+    region: singapore # Match service region
+    version: "16"
+
 services:
   # --------------------------------------------------------------------------------
   # API Service
@@ -8,10 +16,12 @@ services:
     dockerContext: .
     dockerfilePath: ./apps/api/Dockerfile
     plan: free
-    region: singapore # or ohio/frankfurt/oregon
+    region: singapore
     envVars:
       - key: DATABASE_URL
-        fromGroup: shared-secrets
+        fromDatabase:
+          name: aanandini-db
+          property: connectionString
       - key: JWT_SECRET
         fromGroup: shared-secrets
       - key: AWS_S3_BUCKET
@@ -60,8 +70,6 @@ services:
 envVarGroups:
   - name: shared-secrets
     envVars:
-      - key: DATABASE_URL
-        placeholder: true
       - key: JWT_SECRET
         generateValue: true
       - key: AWS_S3_BUCKET
