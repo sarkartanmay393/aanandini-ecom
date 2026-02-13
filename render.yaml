@@ -73,11 +73,16 @@ envVarGroups:
         generateValue: true
       - key: AWS_S3_BUCKET
         placeholder: true
+        value: development
       - key: AWS_REGION
         placeholder: true
+        value: development
       - key: AWS_ACCESS_KEY_ID
         placeholder: true
+        value: development
       - key: AWS_SECRET_ACCESS_KEY
         placeholder: true
+        value: development
       - key: NODE_ENV
         placeholder: true
+        value: development
