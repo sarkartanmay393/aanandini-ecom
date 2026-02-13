@@ -1,46 +1,44 @@
-FROM node:18-alpine AS base
+FROM node:20-alpine AS base
 
 FROM base AS builder
-# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
 RUN apk add --no-cache libc6-compat
-# Set working directory
 WORKDIR /app
 RUN npm install turbo --global
 COPY . .
 RUN turbo prune --scope=@aanandini/api --docker
 
-# Add lockfile and package.json's of isolated subworkspace
 FROM base AS installer
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-# First install dependencies (as they change less often)
 COPY .gitignore .gitignore
 COPY --from=builder /app/out/json/ .
 COPY --from=builder /app/out/package-lock.json ./package-lock.json
 RUN npm ci
 
-# Build the project and its dependencies
 COPY --from=builder /app/out/full/ .
 COPY turbo.json turbo.json
 
-# Generate Prisma Client
 RUN npx prisma generate --schema=./packages/db/prisma/schema.prisma
-
 RUN npx turbo run build --filter=@aanandini/api...
 
 FROM base AS runner
 WORKDIR /app
 
-# Don't run production as root
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nestjs
-USER nestjs
 
+# Copy build output and dependencies
 COPY --from=installer /app/apps/api/package.json .
 COPY --from=installer --chown=nestjs:nodejs /app/apps/api/dist ./dist
 COPY --from=installer --chown=nestjs:nodejs /app/node_modules ./node_modules
+COPY --from=installer --chown=nestjs:nodejs /app/packages/db ./packages/db
 COPY --from=installer --chown=nestjs:nodejs /app/packages/db/prisma ./prisma
+
+# Re-create workspace symlink (Docker COPY can't follow cross-directory symlinks)
+RUN rm -rf node_modules/@aanandini/db && ln -s /app/packages/db node_modules/@aanandini/db
+
+USER nestjs
 
 EXPOSE 3000
 
