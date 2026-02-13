@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  api:
+    image: ${DOCKER_USERNAME}/aanandini:api-latest
+    restart: always
+    env_file: .env.production
+    networks:
+      - aanandini-network
+
+  admin:
+    image: ${DOCKER_USERNAME}/aanandini:admin-latest
+    restart: always
+    env_file: .env.production
+    networks:
+      - aanandini-network
+
+  web:
+    image: ${DOCKER_USERNAME}/aanandini:web-latest
+    restart: always
+    env_file: .env.production
+    networks:
+      - aanandini-network
+
+  proxy:
+    image: caddy:alpine
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - aanandini-network
+    depends_on:
+      - api
+      - admin
+      - web
+
+networks:
+  aanandini-network:
+    driver: bridge
+
+volumes:
+  caddy_data:
+  caddy_config:

@@ -1,0 +1,74 @@
+services:
+  # --------------------------------------------------------------------------------
+  # API Service
+  # --------------------------------------------------------------------------------
+  - type: web
+    name: aanandini-api
+    env: docker
+    dockerContext: .
+    dockerfilePath: ./apps/api/Dockerfile
+    plan: free
+    region: singapore # or ohio/frankfurt/oregon
+    envVars:
+      - key: DATABASE_URL
+        fromGroup: shared-secrets
+      - key: JWT_SECRET
+        fromGroup: shared-secrets
+      - key: AWS_S3_BUCKET
+        fromGroup: shared-secrets
+      - key: AWS_REGION
+        fromGroup: shared-secrets
+      - key: AWS_ACCESS_KEY_ID
+        fromGroup: shared-secrets
+      - key: AWS_SECRET_ACCESS_KEY
+        fromGroup: shared-secrets
+      - key: NODE_ENV
+        value: production
+
+  # --------------------------------------------------------------------------------
+  # Admin Panel
+  # --------------------------------------------------------------------------------
+  - type: web
+    name: aanandini-admin
+    env: docker
+    dockerContext: .
+    dockerfilePath: ./apps/admin/Dockerfile
+    plan: free
+    region: singapore
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        value: https://aanandini-api.onrender.com
+      - key: NODE_ENV
+        value: production
+
+  # --------------------------------------------------------------------------------
+  # Customer Web App
+  # --------------------------------------------------------------------------------
+  - type: web
+    name: aanandini-web
+    env: docker
+    dockerContext: .
+    dockerfilePath: ./apps/web/Dockerfile
+    plan: free
+    region: singapore
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        value: https://aanandini-api.onrender.com
+      - key: NODE_ENV
+        value: production
+
+envVarGroups:
+  - name: shared-secrets
+    envVars:
+      - key: DATABASE_URL
+        placeholder: true
+      - key: JWT_SECRET
+        generateValue: true
+      - key: AWS_S3_BUCKET
+        placeholder: true
+      - key: AWS_REGION
+        placeholder: true
+      - key: AWS_ACCESS_KEY_ID
+        placeholder: true
+      - key: AWS_SECRET_ACCESS_KEY
+        placeholder: true
