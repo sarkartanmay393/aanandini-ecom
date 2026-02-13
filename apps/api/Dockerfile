@@ -25,7 +25,7 @@ COPY --from=builder /app/out/full/ .
 COPY turbo.json turbo.json
 
 # Generate Prisma Client
-RUN npx prisma generate
+RUN npx prisma generate --schema=./packages/db/prisma/schema.prisma
 
 RUN npx turbo run build --filter=@aanandini/api...
 
@@ -40,6 +40,8 @@ USER nestjs
 COPY --from=installer /app/apps/api/package.json .
 COPY --from=installer --chown=nestjs:nodejs /app/apps/api/dist ./dist
 COPY --from=installer --chown=nestjs:nodejs /app/node_modules ./node_modules
-# Copy prisma generated client if needed, though usually in node_modules
+COPY --from=installer --chown=nestjs:nodejs /app/packages/db/prisma ./prisma
 
-CMD ["node", "dist/main"]
+EXPOSE 3000
+
+CMD ["sh", "-c", "npx prisma db push --schema=./prisma/schema.prisma --skip-generate && node dist/main"]

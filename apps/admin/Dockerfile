@@ -4,6 +4,7 @@ FROM base AS builder
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 RUN npm install turbo --global
+
 COPY . .
 RUN turbo prune --scope=@aanandini/admin --docker
 
@@ -35,6 +36,11 @@ COPY --from=installer /app/apps/admin/package.json .
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --from=installer --chown=nextjs:nodejs /app/apps/admin/.next/standalone ./
 COPY --from=installer --chown=nextjs:nodejs /app/apps/admin/.next/static ./apps/admin/.next/static
-COPY --from=installer --chown=nextjs:nodejs /app/apps/admin/public ./apps/admin/public
+# COPY --from=installer --chown=nextjs:nodejs /app/apps/admin/public ./apps/admin/public
+
+EXPOSE 3000
+
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
 
 CMD ["node", "apps/admin/server.js"]

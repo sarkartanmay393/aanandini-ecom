@@ -11,7 +11,7 @@ dist/
 !.env.example
 
 # Prisma
-packages/db/prisma/migrations/
+# packages/db/prisma/migrations/
 
 # IDE
 .vscode/

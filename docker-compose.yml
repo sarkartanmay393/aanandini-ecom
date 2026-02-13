@@ -1,16 +1,54 @@
+version: '3.8'
+
 services:
-  postgres:
-    image: postgres:15-alpine
-    container_name: aanandini-postgres
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: aanandini
-      POSTGRES_PASSWORD: aanandini_secret
-      POSTGRES_DB: aanandini
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    restart: always
+    env_file: .env.production
+    networks:
+      - aanandini-network
+
+  admin:
+    build:
+      context: .
+      dockerfile: apps/admin/Dockerfile
+    restart: always
+    env_file: .env.production
+    networks:
+      - aanandini-network
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    restart: always
+    env_file: .env.production
+    networks:
+      - aanandini-network
+
+  proxy:
+    image: caddy:alpine
+    restart: always
     ports:
-      - '5432:5432'
+      - "80:80"
+      - "443:443"
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - aanandini-network
+    depends_on:
+      - api
+      - admin
+      - web
+
+networks:
+  aanandini-network:
+    driver: bridge
 
 volumes:
-  pgdata:
+  caddy_data:
+  caddy_config:
