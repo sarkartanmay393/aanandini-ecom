@@ -21,9 +21,9 @@ async function bootstrap() {
     app.enableCors();
 
     // Serve uploaded files in dev
-    if (process.env.NODE_ENV !== 'production') {
+    // if (process.env.NODE_ENV !== 'production') {
         app.useStaticAssets(join(process.cwd(), 'uploads'), { prefix: '/uploads' });
-    }
+    // }
 
     const port = process.env.PORT || 3000;
     await app.listen(port);

@@ -129,8 +129,8 @@ async function main() {
             price: 12500,
             stock: 8,
             images: [
-                'https://images.unsplash.com/photo-1610030469983-098e81613795?w=600&h=800&fit=crop',
-                'https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=600&h=800&fit=crop',
+                'https://images.unsplash.com/photo-1612722432474-b971cdcea546?w=600&h=800&fit=crop',
+                'https://images.unsplash.com/photo-1612722432474-b971cdcea546?w=600&h=800&fit=crop',
             ],
             categoryId: categories['banarasi-saree'],
         },
@@ -142,7 +142,7 @@ async function main() {
             stock: 12,
             images: [
                 'https://images.unsplash.com/photo-1594463750939-ebb28c3f7f75?w=600&h=800&fit=crop',
-                'https://images.unsplash.com/photo-1610030469983-098e81613795?w=600&h=800&fit=crop',
+                'https://images.unsplash.com/photo-1612722432474-b971cdcea546?w=600&h=800&fit=crop',
             ],
             categoryId: categories['banarasi-saree'],
         },
@@ -153,8 +153,8 @@ async function main() {
             price: 15800,
             stock: 5,
             images: [
-                'https://images.unsplash.com/photo-1617627143233-46b90e39e882?w=600&h=800&fit=crop',
-                'https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=600&h=800&fit=crop',
+                'https://images.unsplash.com/photo-1612722432474-b971cdcea546?w=600&h=800&fit=crop',
+                'https://images.unsplash.com/photo-1612722432474-b971cdcea546?w=600&h=800&fit=crop',
             ],
             categoryId: categories['banarasi-saree'],
         },
@@ -168,7 +168,7 @@ async function main() {
             stock: 6,
             images: [
                 'https://images.unsplash.com/photo-1612722432474-b971cdcea546?w=600&h=800&fit=crop',
-                'https://images.unsplash.com/photo-1610030469983-098e81613795?w=600&h=800&fit=crop',
+                'https://images.unsplash.com/photo-1612722432474-b971cdcea546?w=600&h=800&fit=crop',
             ],
             categoryId: categories['kanjivaram-saree'],
         },
@@ -179,7 +179,7 @@ async function main() {
             price: 22000,
             stock: 4,
             images: [
-                'https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=600&h=800&fit=crop',
+                'https://images.unsplash.com/photo-1612722432474-b971cdcea546?w=600&h=800&fit=crop',
                 'https://images.unsplash.com/photo-1594463750939-ebb28c3f7f75?w=600&h=800&fit=crop',
             ],
             categoryId: categories['kanjivaram-saree'],
@@ -193,8 +193,8 @@ async function main() {
             price: 4500,
             stock: 15,
             images: [
-                'https://images.unsplash.com/photo-1610030469983-098e81613795?w=600&h=800&fit=crop',
-                'https://images.unsplash.com/photo-1617627143233-46b90e39e882?w=600&h=800&fit=crop',
+                'https://images.unsplash.com/photo-1612722432474-b971cdcea546?w=600&h=800&fit=crop',
+                'https://images.unsplash.com/photo-1612722432474-b971cdcea546?w=600&h=800&fit=crop',
             ],
             categoryId: categories['chanderi-saree'],
         },
@@ -219,8 +219,8 @@ async function main() {
             price: 7800,
             stock: 7,
             images: [
-                'https://images.unsplash.com/photo-1617627143233-46b90e39e882?w=600&h=800&fit=crop',
-                'https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=600&h=800&fit=crop',
+                'https://images.unsplash.com/photo-1612722432474-b971cdcea546?w=600&h=800&fit=crop',
+                'https://images.unsplash.com/photo-1612722432474-b971cdcea546?w=600&h=800&fit=crop',
             ],
             categoryId: categories['tussar-silk-saree'],
         },
@@ -232,7 +232,7 @@ async function main() {
             stock: 9,
             images: [
                 'https://images.unsplash.com/photo-1612722432474-b971cdcea546?w=600&h=800&fit=crop',
-                'https://images.unsplash.com/photo-1610030469983-098e81613795?w=600&h=800&fit=crop',
+                'https://images.unsplash.com/photo-1612722432474-b971cdcea546?w=600&h=800&fit=crop',
             ],
             categoryId: categories['tussar-silk-saree'],
         },
@@ -245,7 +245,7 @@ async function main() {
             price: 3200,
             stock: 20,
             images: [
-                'https://images.unsplash.com/photo-1610030469983-098e81613795?w=600&h=800&fit=crop',
+                'https://images.unsplash.com/photo-1612722432474-b971cdcea546?w=600&h=800&fit=crop',
                 'https://images.unsplash.com/photo-1594463750939-ebb28c3f7f75?w=600&h=800&fit=crop',
             ],
             categoryId: categories['cotton-handloom'],
@@ -257,8 +257,8 @@ async function main() {
             price: 2800,
             stock: 18,
             images: [
-                'https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=600&h=800&fit=crop',
-                'https://images.unsplash.com/photo-1617627143233-46b90e39e882?w=600&h=800&fit=crop',
+                'https://images.unsplash.com/photo-1612722432474-b971cdcea546?w=600&h=800&fit=crop',
+                'https://images.unsplash.com/photo-1612722432474-b971cdcea546?w=600&h=800&fit=crop',
             ],
             categoryId: categories['cotton-handloom'],
         },
@@ -283,8 +283,8 @@ async function main() {
             price: 3500,
             stock: 16,
             images: [
-                'https://images.unsplash.com/photo-1617627143233-46b90e39e882?w=600&h=800&fit=crop',
-                'https://images.unsplash.com/photo-1610030469983-098e81613795?w=600&h=800&fit=crop',
+                'https://images.unsplash.com/photo-1612722432474-b971cdcea546?w=600&h=800&fit=crop',
+                'https://images.unsplash.com/photo-1612722432474-b971cdcea546?w=600&h=800&fit=crop',
             ],
             categoryId: categories['linen-saree'],
         },
@@ -296,7 +296,7 @@ async function main() {
             stock: 11,
             images: [
                 'https://images.unsplash.com/photo-1612722432474-b971cdcea546?w=600&h=800&fit=crop',
-                'https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=600&h=800&fit=crop',
+                'https://images.unsplash.com/photo-1612722432474-b971cdcea546?w=600&h=800&fit=crop',
             ],
             categoryId: categories['linen-saree'],
         },
