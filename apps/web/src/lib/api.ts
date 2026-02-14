@@ -103,7 +103,7 @@ export async function getProfile(token: string) {
     });
 }
 
-export async function updateProfile(token: string, data: { name?: string; phone?: string }) {
+export async function updateProfile(token: string, data: { name?: string; phone?: string; email?: string }) {
     return fetchApi('/auth/me', {
         method: 'PUT',
         body: JSON.stringify(data),

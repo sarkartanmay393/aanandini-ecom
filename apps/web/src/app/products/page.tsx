@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Search, SlidersHorizontal, ChevronDown } from 'lucide-react';
 import { Input } from '@aanandini/ui';
 import { ProductCard } from '@/components/product-card';
@@ -9,6 +10,7 @@ import * as api from '@/lib/api';
 type SortOption = 'newest' | 'price-asc' | 'price-desc' | 'name';
 
 export default function ProductsPage() {
+    const searchParams = useSearchParams();
     const [products, setProducts] = useState<api.Product[]>([]);
     const [categories, setCategories] = useState<api.Category[]>([]);
     const [loading, setLoading] = useState(true);
@@ -20,17 +22,38 @@ export default function ProductsPage() {
     const [sort, setSort] = useState<SortOption>('newest');
     const [page, setPage] = useState(1);
     const [showFilters, setShowFilters] = useState(false);
+    const [minPrice, setMinPrice] = useState('');
+    const [maxPrice, setMaxPrice] = useState('');
 
-    // Load categories once
+    // Load categories once, and resolve URL ?category= slug to categoryId
     useEffect(() => {
-        api.getCategories().then(setCategories).catch(() => { });
-    }, []);
+        api.getCategories().then((cats) => {
+            setCategories(cats);
+            // If URL has ?category=slug, resolve to categoryId
+            const categorySlug = searchParams.get('category');
+            if (categorySlug) {
+                const match = cats.find((c: api.Category) => c.slug === categorySlug);
+                if (match) {
+                    setCategoryId(match.id);
+                }
+            }
+        }).catch(() => { });
+    }, [searchParams]);
 
     // Load products on filter change
     useEffect(() => {
         setLoading(true);
+        const params: Record<string, any> = {
+            search: search || undefined,
+            categoryId: categoryId || undefined,
+            page,
+            limit: 12,
+        };
+        if (minPrice) params.minPrice = Number(minPrice);
+        if (maxPrice) params.maxPrice = Number(maxPrice);
+
         api
-            .getProducts({ search: search || undefined, categoryId: categoryId || undefined, page, limit: 12 })
+            .getProducts(params)
             .then((res) => {
                 let sorted = [...res.data];
                 switch (sort) {
@@ -49,7 +72,7 @@ export default function ProductsPage() {
             })
             .catch(() => { })
             .finally(() => setLoading(false));
-    }, [search, categoryId, page, sort]);
+    }, [search, categoryId, page, sort, minPrice, maxPrice]);
 
     // Debounce search
     const [searchInput, setSearchInput] = useState('');
@@ -60,6 +83,18 @@ export default function ProductsPage() {
         }, 400);
         return () => clearTimeout(timer);
     }, [searchInput]);
+
+    // Debounce price
+    const [minPriceInput, setMinPriceInput] = useState('');
+    const [maxPriceInput, setMaxPriceInput] = useState('');
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setMinPrice(minPriceInput);
+            setMaxPrice(maxPriceInput);
+            setPage(1);
+        }, 500);
+        return () => clearTimeout(timer);
+    }, [minPriceInput, maxPriceInput]);
 
     return (
         <div className="animate-fade-in">
@@ -73,46 +108,87 @@ export default function ProductsPage() {
 
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
                 {/* Search & Filters Bar */}
-                <div className="flex flex-col sm:flex-row gap-4 mb-8">
-                    {/* Search */}
-                    <div className="relative flex-1">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                        <Input
-                            placeholder="Search products..."
-                            value={searchInput}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchInput(e.target.value)}
-                            className="pl-10"
-                        />
-                    </div>
+                <div className="flex flex-col gap-4 mb-8">
+                    <div className="flex flex-col sm:flex-row gap-4">
+                        {/* Search */}
+                        <div className="relative flex-1">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                            <Input
+                                placeholder="Search products..."
+                                value={searchInput}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchInput(e.target.value)}
+                                className="pl-10"
+                            />
+                        </div>
 
-                    {/* Sort */}
-                    <div className="relative">
-                        <select
-                            value={sort}
-                            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSort(e.target.value as SortOption)}
-                            className="h-10 appearance-none rounded-lg border border-slate-300 bg-white pl-3 pr-10 text-sm text-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 cursor-pointer"
+                        {/* Sort */}
+                        <div className="relative">
+                            <select
+                                value={sort}
+                                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSort(e.target.value as SortOption)}
+                                className="h-10 w-full sm:w-auto appearance-none rounded-lg border border-slate-300 bg-white pl-3 pr-10 text-sm text-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 cursor-pointer"
+                            >
+                                <option value="newest">Newest First</option>
+                                <option value="price-asc">Price: Low to High</option>
+                                <option value="price-desc">Price: High to Low</option>
+                                <option value="name">Name: A-Z</option>
+                            </select>
+                            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+                        </div>
+
+                        {/* Filter toggle (mobile) */}
+                        <button
+                            onClick={() => setShowFilters(!showFilters)}
+                            className={`sm:hidden flex items-center justify-center gap-2 h-10 px-4 rounded-lg border text-sm font-medium shadow-sm transition-colors ${showFilters ? 'bg-brand-50 border-brand-300 text-brand-700' : 'border-slate-300 bg-white text-slate-700'}`}
                         >
-                            <option value="newest">Newest First</option>
-                            <option value="price-asc">Price: Low to High</option>
-                            <option value="price-desc">Price: High to Low</option>
-                            <option value="name">Name: A-Z</option>
-                        </select>
-                        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+                            <SlidersHorizontal className="h-4 w-4" />
+                            {showFilters ? 'Hide Filters' : 'Filters'}
+                        </button>
                     </div>
 
-                    {/* Filter toggle (mobile) */}
-                    <button
-                        onClick={() => setShowFilters(!showFilters)}
-                        className="sm:hidden flex items-center gap-2 h-10 px-4 rounded-lg border border-slate-300 bg-white text-sm text-slate-700 shadow-sm"
-                    >
-                        <SlidersHorizontal className="h-4 w-4" />
-                        Filters
-                    </button>
+                    {/* Mobile Filters Panel (inline collapsible) */}
+                    {showFilters && (
+                        <div className="sm:hidden bg-white rounded-xl border border-slate-200 p-4 space-y-5 animate-fade-in">
+                            <div>
+                                <h3 className="text-sm font-semibold text-slate-900 mb-2">Categories</h3>
+                                <div className="flex flex-wrap gap-2">
+                                    <button
+                                        onClick={() => { setCategoryId(''); setPage(1); }}
+                                        className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${!categoryId ? 'bg-brand-700 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
+                                    >
+                                        All
+                                    </button>
+                                    {categories.map((cat) => (
+                                        <button
+                                            key={cat.id}
+                                            onClick={() => { setCategoryId(cat.id); setPage(1); }}
+                                            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${categoryId === cat.id ? 'bg-brand-700 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
+                                        >
+                                            {cat.name}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                            <div>
+                                <h3 className="text-sm font-semibold text-slate-900 mb-2">Price Range</h3>
+                                <div className="flex gap-2 items-center">
+                                    <Input type="number" placeholder="₹ Min" value={minPriceInput} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMinPriceInput(e.target.value)} className="text-sm flex-1" min="0" />
+                                    <span className="text-slate-400 text-xs">to</span>
+                                    <Input type="number" placeholder="₹ Max" value={maxPriceInput} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMaxPriceInput(e.target.value)} className="text-sm flex-1" min="0" />
+                                </div>
+                                {(minPriceInput || maxPriceInput) && (
+                                    <button onClick={() => { setMinPriceInput(''); setMaxPriceInput(''); }} className="text-xs text-brand-600 hover:text-brand-700 font-medium mt-2">
+                                        Clear price filter
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 <div className="flex gap-8">
-                    {/* Sidebar Filters */}
-                    <aside className={`${showFilters ? 'block' : 'hidden'} sm:block w-full sm:w-56 shrink-0`}>
+                    {/* Sidebar Filters (desktop only) */}
+                    <aside className="hidden sm:block w-56 shrink-0">
                         <div className="sticky top-24 space-y-6">
                             <div>
                                 <h3 className="text-sm font-semibold text-slate-900 mb-3">Categories</h3>
@@ -143,6 +219,40 @@ export default function ProductsPage() {
                                             )}
                                         </button>
                                     ))}
+                                </div>
+                            </div>
+
+                            {/* Price Range Filter */}
+                            <div>
+                                <h3 className="text-sm font-semibold text-slate-900 mb-3">Price Range</h3>
+                                <div className="space-y-2">
+                                    <div className="flex gap-2 items-center">
+                                        <Input
+                                            type="number"
+                                            placeholder="₹ Min"
+                                            value={minPriceInput}
+                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMinPriceInput(e.target.value)}
+                                            className="text-sm"
+                                            min="0"
+                                        />
+                                        <span className="text-slate-400 text-xs">to</span>
+                                        <Input
+                                            type="number"
+                                            placeholder="₹ Max"
+                                            value={maxPriceInput}
+                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMaxPriceInput(e.target.value)}
+                                            className="text-sm"
+                                            min="0"
+                                        />
+                                    </div>
+                                    {(minPriceInput || maxPriceInput) && (
+                                        <button
+                                            onClick={() => { setMinPriceInput(''); setMaxPriceInput(''); }}
+                                            className="text-xs text-brand-600 hover:text-brand-700 font-medium"
+                                        >
+                                            Clear price filter
+                                        </button>
+                                    )}
                                 </div>
                             </div>
                         </div>

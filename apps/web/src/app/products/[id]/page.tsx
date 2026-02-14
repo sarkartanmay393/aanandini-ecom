@@ -17,7 +17,16 @@ export default function ProductDetailPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [added, setAdded] = useState(false);
-    const [selectedImage, setSelectedImage] = useState(0);
+    const [selectedMedia, setSelectedMedia] = useState(0);
+
+    // Combine images and videos into a single media array
+    const mediaItems: { type: 'image' | 'video'; url: string }[] = [];
+    if (product) {
+        product.images.forEach((url) => mediaItems.push({ type: 'image', url }));
+        if (product.videos) {
+            product.videos.forEach((url) => mediaItems.push({ type: 'video', url }));
+        }
+    }
 
     useEffect(() => {
         api
@@ -92,15 +101,26 @@ export default function ProductDetailPage() {
 
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
-                    {/* Image Gallery */}
+                    {/* Media Gallery */}
                     <div className="space-y-6">
                         <div className="aspect-[3/4] overflow-hidden bg-stone-100 relative">
-                            {product.images[selectedImage] ? (
-                                <img
-                                    src={product.images[selectedImage]}
-                                    alt={product.name}
-                                    className="h-full w-full object-cover transition-opacity duration-300"
-                                />
+                            {mediaItems[selectedMedia] ? (
+                                mediaItems[selectedMedia].type === 'video' ? (
+                                    <video
+                                        key={mediaItems[selectedMedia].url}
+                                        src={mediaItems[selectedMedia].url}
+                                        controls
+                                        autoPlay
+                                        playsInline
+                                        className="h-full w-full object-cover"
+                                    />
+                                ) : (
+                                    <img
+                                        src={mediaItems[selectedMedia].url}
+                                        alt={product.name}
+                                        className="h-full w-full object-cover transition-opacity duration-300"
+                                    />
+                                )
                             ) : (
                                 <div className="h-full w-full flex items-center justify-center">
                                     <span className="text-8xl font-serif text-stone-300">
@@ -109,18 +129,27 @@ export default function ProductDetailPage() {
                                 </div>
                             )}
                         </div>
-                        {product.images.length > 1 && (
+                        {mediaItems.length > 1 && (
                             <div className="flex gap-4 overflow-x-auto pb-2">
-                                {product.images.map((img, idx) => (
+                                {mediaItems.map((media, idx) => (
                                     <button
                                         key={idx}
-                                        onClick={() => setSelectedImage(idx)}
-                                        className={`shrink-0 h-24 w-20 overflow-hidden border transition-all ${selectedImage === idx
+                                        onClick={() => setSelectedMedia(idx)}
+                                        className={`shrink-0 h-24 w-20 overflow-hidden border transition-all relative ${selectedMedia === idx
                                             ? 'border-brand-800 opacity-100'
                                             : 'border-transparent opacity-60 hover:opacity-100'
                                             }`}
                                     >
-                                        <img src={img} alt="" className="h-full w-full object-cover" />
+                                        {media.type === 'video' ? (
+                                            <>
+                                                <video src={media.url} preload="metadata" muted className="h-full w-full object-cover" />
+                                                <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                                                    <Play className="h-5 w-5 text-white fill-white" />
+                                                </div>
+                                            </>
+                                        ) : (
+                                            <img src={media.url} alt="" className="h-full w-full object-cover" />
+                                        )}
                                     </button>
                                 ))}
                             </div>
@@ -220,28 +249,6 @@ export default function ProductDetailPage() {
                         </div>
                     </div>
                 </div>
-
-                {/* Video Section */}
-                {product.videos && product.videos.length > 0 && (
-                    <div className="mt-16 border-t border-stone-200 pt-12 max-w-4xl mx-auto">
-                        <h2 className="text-2xl font-serif text-stone-900 mb-8 text-center">
-                            Product Videos
-                        </h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {product.videos.map((videoUrl, idx) => (
-                                <div key={idx} className="relative rounded-lg overflow-hidden bg-stone-100 aspect-video">
-                                    <video
-                                        src={videoUrl}
-                                        controls
-                                        playsInline
-                                        preload="metadata"
-                                        className="w-full h-full object-cover"
-                                    />
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                )}
 
                 {/* Reviews Section */}
                 {product.reviews && product.reviews.length > 0 && (

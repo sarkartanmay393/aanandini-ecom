@@ -71,7 +71,7 @@ export function Header() {
                                     className="flex items-center gap-2 text-sm text-stone-600 hover:text-brand-800 transition-colors font-serif italic"
                                 >
                                     <User className="h-4 w-4" />
-                                    {user.name.split(' ')[0]}
+                                    {user.name ? user.name.split(' ')[0] : 'User'}
                                     <ChevronDown className={`h-3 w-3 transition-transform ${userMenuOpen ? 'rotate-180' : ''}`} />
                                 </button>
 
@@ -181,7 +181,7 @@ export function Header() {
                                         onClick={() => { logout(); setMobileOpen(false); }}
                                         className="flex items-center gap-3 text-sm font-medium text-red-600 text-left"
                                     >
-                                        <LogOut className="h-4 w-4" /> Sign Out ({user.name})
+                                        <LogOut className="h-4 w-4" /> Sign Out ({user.name || 'User'})
                                     </button>
                                 </>
                             ) : (

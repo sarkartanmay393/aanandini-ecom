@@ -14,6 +14,7 @@ interface AuthContextType extends AuthState {
     register: (name: string, email: string, password: string) => Promise<void>;
     loginWithOtp: (phone: string, code: string) => Promise<void>;
     logout: () => void;
+    updateUser: (updatedUser: Partial<api.User>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -69,8 +70,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setState({ user: null, token: null, isLoading: false });
     }, []);
 
+    const updateUser = useCallback((updatedUser: Partial<api.User>) => {
+        setState((prev) => {
+            const merged = { ...prev.user!, ...updatedUser };
+            localStorage.setItem('aanandini_user', JSON.stringify(merged));
+            return { ...prev, user: merged };
+        });
+    }, []);
+
     return (
-        <AuthContext.Provider value={{ ...state, login: loginFn, register: registerFn, loginWithOtp: loginWithOtpFn, logout }}>
+        <AuthContext.Provider value={{ ...state, login: loginFn, register: registerFn, loginWithOtp: loginWithOtpFn, logout, updateUser }}>
             {children}
         </AuthContext.Provider>
     );

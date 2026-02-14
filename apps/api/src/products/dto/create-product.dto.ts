@@ -22,6 +22,11 @@ export class CreateProductDto {
     @IsOptional()
     images?: string[];
 
+    @IsArray()
+    @IsString({ each: true })
+    @IsOptional()
+    videos?: string[];
+
     @IsString()
     @IsNotEmpty()
     categoryId: string;

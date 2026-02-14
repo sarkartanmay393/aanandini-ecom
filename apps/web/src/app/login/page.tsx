@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/providers/auth-provider';
@@ -11,7 +11,7 @@ import { Button, Input } from '@aanandini/ui';
 type Step = 'phone' | 'otp' | 'email';
 
 export default function LoginPage() {
-    const { loginWithOtp, login } = useAuth();
+    const { loginWithOtp, login, user } = useAuth();
     const router = useRouter();
 
     const [step, setStep] = useState<Step>('phone');
@@ -22,6 +22,10 @@ export default function LoginPage() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [countdown, setCountdown] = useState(0);
+
+    useEffect(() => {
+        if (user) router.replace('/');
+    }, [user, router]);
 
     const startCountdown = () => {
         setCountdown(30);

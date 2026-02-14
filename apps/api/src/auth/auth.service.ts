@@ -97,6 +97,18 @@ export class AuthService {
         const user = await this.prisma.user.findUnique({ where: { id: userId } });
         if (!user) throw new UnauthorizedException('User not found');
 
+        // Check email uniqueness if being updated
+        if (dto.email && dto.email !== user.email) {
+            const existing = await this.prisma.user.findUnique({ where: { email: dto.email } });
+            if (existing) throw new ConflictException('Email already in use');
+        }
+
+        // Check phone uniqueness if being updated
+        if (dto.phone && dto.phone !== user.phone) {
+            const existing = await this.prisma.user.findUnique({ where: { phone: dto.phone } });
+            if (existing) throw new ConflictException('Phone number already in use');
+        }
+
         return this.prisma.user.update({
             where: { id: userId },
             data: dto,

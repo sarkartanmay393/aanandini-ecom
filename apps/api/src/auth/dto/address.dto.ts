@@ -63,4 +63,8 @@ export class UpdateProfileDto {
     @IsOptional()
     @IsString()
     phone?: string;
+
+    @IsOptional()
+    @IsString()
+    email?: string;
 }

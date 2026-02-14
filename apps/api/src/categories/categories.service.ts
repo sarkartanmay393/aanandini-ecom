@@ -6,9 +6,25 @@ import { CreateCategoryDto, UpdateCategoryDto } from './dto';
 export class CategoriesService {
     constructor(private readonly prisma: PrismaService) { }
 
+    private generateSlug(name: string): string {
+        return name
+            .toLowerCase()
+            .trim()
+            .replace(/[^a-z0-9\s-]/g, '')
+            .replace(/\s+/g, '-')
+            .replace(/-+/g, '-');
+    }
+
     async findAll() {
         return this.prisma.category.findMany({
-            include: { _count: { select: { products: true } } },
+            include: {
+                _count: { select: { products: true } },
+                products: {
+                    take: 1,
+                    select: { images: true },
+                    orderBy: { createdAt: 'desc' },
+                },
+            },
             orderBy: { name: 'asc' },
         });
     }
@@ -27,16 +43,18 @@ export class CategoriesService {
     }
 
     async create(dto: CreateCategoryDto) {
+        const slug = dto.slug || this.generateSlug(dto.name);
+
         const existing = await this.prisma.category.findUnique({
-            where: { slug: dto.slug },
+            where: { slug },
         });
 
         if (existing) {
-            throw new ConflictException(`Category with slug "${dto.slug}" already exists`);
+            throw new ConflictException(`Category with slug "${slug}" already exists`);
         }
 
         return this.prisma.category.create({
-            data: dto,
+            data: { name: dto.name, slug },
         });
     }
 
@@ -71,14 +89,15 @@ export class CategoriesService {
         const results = [];
         const skipped = [];
         for (const item of items) {
+            const slug = item.slug || this.generateSlug(item.name);
             const existing = await this.prisma.category.findUnique({
-                where: { slug: item.slug },
+                where: { slug },
             });
             if (existing) {
-                skipped.push(item.slug);
+                skipped.push(slug);
                 continue;
             }
-            const category = await this.prisma.category.create({ data: item });
+            const category = await this.prisma.category.create({ data: { name: item.name, slug } });
             results.push(category);
         }
         return { created: results.length, skipped: skipped.length, categories: results };

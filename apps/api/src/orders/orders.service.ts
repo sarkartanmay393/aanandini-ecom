@@ -219,14 +219,59 @@ export class OrdersService {
     // ── Dashboard stats ─────────────────────────────────────
 
     async getStats() {
-        const [totalOrders, totalProducts, totalUsers, revenueResult] = await Promise.all([
+        const [totalOrders, totalProducts, totalUsers, revenueResult, pendingOrders, ordersByStatus, recentOrders, topProducts] = await Promise.all([
             this.prisma.order.count(),
             this.prisma.product.count(),
             this.prisma.user.count({ where: { role: 'CUSTOMER' } }),
             this.prisma.order.aggregate({ _sum: { total: true }, where: { paymentStatus: 'SUCCESS' } }),
+            this.prisma.order.count({ where: { status: 'PENDING' } }),
+            this.prisma.order.groupBy({
+                by: ['status'],
+                _count: { status: true },
+            }),
+            this.prisma.order.findMany({
+                take: 5,
+                orderBy: { createdAt: 'desc' },
+                include: {
+                    user: { select: { id: true, name: true, email: true } },
+                    items: {
+                        include: {
+                            product: { select: { id: true, name: true, images: true } },
+                        },
+                    },
+                },
+            }),
+            this.prisma.orderItem.groupBy({
+                by: ['productId'],
+                _sum: { quantity: true, price: true },
+                orderBy: { _sum: { quantity: 'desc' } },
+                take: 5,
+            }),
         ]);
 
-        const pendingOrders = await this.prisma.order.count({ where: { status: 'PENDING' } });
+        // Resolve product names for top products
+        const topProductIds = topProducts.map((p) => p.productId);
+        const productDetails = await this.prisma.product.findMany({
+            where: { id: { in: topProductIds } },
+            select: { id: true, name: true, images: true },
+        });
+
+        const topProductsWithDetails = topProducts.map((p) => {
+            const product = productDetails.find((pd) => pd.id === p.productId);
+            return {
+                productId: p.productId,
+                name: product?.name || 'Unknown',
+                image: product?.images?.[0] || null,
+                totalQuantity: p._sum.quantity || 0,
+                totalRevenue: p._sum.price || 0,
+            };
+        });
+
+        // Order status breakdown
+        const statusBreakdown: Record<string, number> = {};
+        for (const s of ordersByStatus) {
+            statusBreakdown[s.status] = s._count.status;
+        }
 
         return {
             totalOrders,
@@ -234,6 +279,17 @@ export class OrdersService {
             totalUsers,
             totalRevenue: revenueResult._sum.total || 0,
             pendingOrders,
+            statusBreakdown,
+            recentOrders: recentOrders.map((o) => ({
+                id: o.id,
+                total: o.total,
+                status: o.status,
+                paymentStatus: o.paymentStatus,
+                customerName: o.user.name || o.user.email || 'Unknown',
+                itemCount: o.items.length,
+                createdAt: o.createdAt,
+            })),
+            topProducts: topProductsWithDetails,
         };
     }
 }

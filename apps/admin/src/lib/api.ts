@@ -235,6 +235,23 @@ export interface DashboardStats {
     totalUsers: number;
     totalRevenue: number;
     pendingOrders: number;
+    statusBreakdown: Record<string, number>;
+    recentOrders: {
+        id: string;
+        total: number;
+        status: string;
+        paymentStatus: string;
+        customerName: string;
+        itemCount: number;
+        createdAt: string;
+    }[];
+    topProducts: {
+        productId: string;
+        name: string;
+        image: string | null;
+        totalQuantity: number;
+        totalRevenue: number;
+    }[];
 }
 
 export function getStats(token: string) {

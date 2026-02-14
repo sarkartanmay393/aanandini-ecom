@@ -7,14 +7,25 @@ import { ProductCard } from '@/components/product-card';
 import { useEffect, useState } from 'react';
 import * as api from '@/lib/api';
 
+// Fallback images for categories without product images
+const FALLBACK_IMAGES: Record<string, string> = {
+    banarasi: 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?q=80&w=1000&auto=format&fit=crop',
+    kanjivaram: 'https://images.unsplash.com/photo-1583391726247-bdea2279d07d?q=80&w=1000&auto=format&fit=crop',
+    chanderi: 'https://images.unsplash.com/photo-1605218427368-35b019b8eacf?q=80&w=1000&auto=format&fit=crop',
+    wedding: 'https://images.unsplash.com/photo-1595991209284-936f53c5d2c1?q=80&w=1000&auto=format&fit=crop',
+    default: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?q=80&w=1000&auto=format&fit=crop',
+};
+
 export default function HomePage() {
     const [products, setProducts] = useState<api.Product[]>([]);
+    const [categories, setCategories] = useState<api.Category[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        api
-            .getProducts({ limit: 8 })
-            .then((res) => setProducts(res.data))
+        Promise.all([
+            api.getProducts({ limit: 8 }).then((res) => setProducts(res.data)),
+            api.getCategories().then(setCategories),
+        ])
             .catch(() => { })
             .finally(() => setLoading(false));
     }, []);
@@ -74,7 +85,7 @@ export default function HomePage() {
                 </div>
             </section>
 
-            {/* Curated Collections (Grid) */}
+            {/* Curated Collections (Bento Grid) */}
             <section className="py-24 bg-stone-50">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-16">
@@ -83,45 +94,35 @@ export default function HomePage() {
                         <div className="h-1 w-20 bg-brand-800 mx-auto mt-6" />
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 h-[600px] md:h-[500px]">
-                        {/* Banarasi - Large item */}
-                        <div className="group relative overflow-hidden rounded-sm md:col-span-1 lg:col-span-1 h-full">
-                            <img src="https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?q=80&w=1000&auto=format&fit=crop" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Banarasi" />
-                            <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors" />
-                            <div className="absolute bottom-6 left-6 text-white">
-                                <h3 className="text-2xl font-serif">Banarasi</h3>
-                                <Link href="/products?category=banarasi" className="text-sm uppercase tracking-wider underline underline-offset-4 decoration-white/0 group-hover:decoration-white transition-all mt-2 inline-block">Explore &rarr;</Link>
-                            </div>
+                    {categories.length > 0 ? (
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 auto-rows-[200px] md:auto-rows-[220px]">
+                            {categories.slice(0, 5).map((cat, idx) => {
+                                const coverImg = (cat as any).products?.[0]?.images?.[0]
+                                    || FALLBACK_IMAGES[cat.slug]
+                                    || FALLBACK_IMAGES.default;
+                                // Bento sizing: first item is 2x2, others fill 1x1 or span
+                                const spanClass = idx === 0
+                                    ? 'col-span-2 row-span-2'
+                                    : idx === 3
+                                        ? 'col-span-2 md:col-span-1'
+                                        : '';
+                                return (
+                                    <div key={cat.id} className={`group relative overflow-hidden rounded-lg ${spanClass}`}>
+                                        <img src={coverImg} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" alt={cat.name} />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent group-hover:from-black/70 transition-colors" />
+                                        <div className="absolute bottom-4 left-4 right-4 text-white">
+                                            <h3 className={`font-serif ${idx === 0 ? 'text-2xl md:text-3xl' : 'text-lg md:text-xl'}`}>{cat.name}</h3>
+                                            <Link href={`/products?category=${cat.slug}`} className="text-xs uppercase tracking-wider underline underline-offset-4 decoration-white/0 group-hover:decoration-white transition-all mt-1 inline-block">
+                                                Explore &rarr;
+                                            </Link>
+                                        </div>
+                                    </div>
+                                );
+                            })}
                         </div>
-                        {/* Kanjivaram & Chanderi - Stacked */}
-                        <div className="flex flex-col gap-6 md:col-span-1 lg:col-span-1 h-full">
-                            <div className="group relative overflow-hidden rounded-sm flex-1">
-                                <img src="https://images.unsplash.com/photo-1583391726247-bdea2279d07d?q=80&w=1000&auto=format&fit=crop" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Kanjivaram" />
-                                <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors" />
-                                <div className="absolute bottom-6 left-6 text-white">
-                                    <h3 className="text-2xl font-serif">Kanjivaram</h3>
-                                    <Link href="/products?category=kanjivaram" className="text-sm uppercase tracking-wider underline underline-offset-4 decoration-white/0 group-hover:decoration-white transition-all mt-2 inline-block">Explore &rarr;</Link>
-                                </div>
-                            </div>
-                            <div className="group relative overflow-hidden rounded-sm flex-1">
-                                <img src="https://images.unsplash.com/photo-1605218427368-35b019b8eacf?q=80&w=1000&auto=format&fit=crop" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Chanderi" />
-                                <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors" />
-                                <div className="absolute bottom-6 left-6 text-white">
-                                    <h3 className="text-2xl font-serif">Chanderi</h3>
-                                    <Link href="/products?category=chanderi" className="text-sm uppercase tracking-wider underline underline-offset-4 decoration-white/0 group-hover:decoration-white transition-all mt-2 inline-block">Explore &rarr;</Link>
-                                </div>
-                            </div>
-                        </div>
-                        {/* Wedding Collection */}
-                        <div className="group relative overflow-hidden rounded-sm md:col-span-2 lg:col-span-1 h-full hidden lg:block">
-                            <img src="https://images.unsplash.com/photo-1595991209284-936f53c5d2c1?q=80&w=1000&auto=format&fit=crop" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Wedding" />
-                            <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors" />
-                            <div className="absolute bottom-6 left-6 text-white">
-                                <h3 className="text-2xl font-serif">Bridal Edit</h3>
-                                <Link href="/products?category=wedding" className="text-sm uppercase tracking-wider underline underline-offset-4 decoration-white/0 group-hover:decoration-white transition-all mt-2 inline-block">Explore &rarr;</Link>
-                            </div>
-                        </div>
-                    </div>
+                    ) : (
+                        <div className="text-center py-12 text-stone-400 font-serif italic">Loading collections...</div>
+                    )}
                 </div>
             </section>
 

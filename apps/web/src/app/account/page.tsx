@@ -8,11 +8,12 @@ import { getProfile, updateProfile } from '@/lib/api';
 import { User, Package, MapPin, Heart, Save, Loader2 } from 'lucide-react';
 
 export default function AccountPage() {
-    const { user, token } = useAuth();
+    const { user, token, updateUser } = useAuth();
     const router = useRouter();
     const [profile, setProfile] = useState<any>(null);
     const [name, setName] = useState('');
     const [phone, setPhone] = useState('');
+    const [email, setEmail] = useState('');
     const [saving, setSaving] = useState(false);
     const [msg, setMsg] = useState('');
 
@@ -26,8 +27,9 @@ export default function AccountPage() {
         try {
             const data = await getProfile(token);
             setProfile(data);
-            setName(data.name);
+            setName(data.name || '');
             setPhone(data.phone || '');
+            setEmail(data.email || '');
         } catch { }
     }
 
@@ -37,7 +39,13 @@ export default function AccountPage() {
         setSaving(true);
         setMsg('');
         try {
-            await updateProfile(token, { name, phone });
+            const updateData: { name?: string; phone?: string; email?: string } = { name };
+            if (phone) updateData.phone = phone;
+            if (email) updateData.email = email;
+            const updated = await updateProfile(token, updateData);
+            setProfile(updated);
+            // Update auth context so header/appbar reflects changes immediately
+            updateUser({ name: updated.name, email: updated.email, phone: updated.phone });
             setMsg('Profile updated successfully!');
         } catch (err: any) {
             setMsg(err.message);
@@ -67,22 +75,39 @@ export default function AccountPage() {
                     </div>
                     <div>
                         <h2 className="text-lg font-serif font-medium text-stone-800">Personal Details</h2>
-                        <p className="text-xs text-stone-400">Update your name and phone number</p>
+                        <p className="text-xs text-stone-400">Update your name, email, and phone number</p>
                     </div>
                 </div>
 
                 <form onSubmit={handleSave} className="grid gap-4 sm:grid-cols-2">
                     <div>
                         <label className="text-xs font-medium text-stone-600 mb-1 block">Full Name</label>
-                        <input value={name} onChange={(e) => setName(e.target.value)} className="w-full rounded-lg border border-stone-200 px-4 py-2.5 text-sm focus:ring-2 focus:ring-brand-200 focus:border-brand-400 outline-none" />
+                        <input value={name} onChange={(e) => setName(e.target.value)} className="w-full rounded-lg border border-stone-200 px-4 py-2.5 text-sm focus:ring-2 focus:ring-brand-200 focus:border-brand-400 outline-none" placeholder="Your full name" />
                     </div>
                     <div>
-                        <label className="text-xs font-medium text-stone-600 mb-1 block">Email</label>
-                        <input value={profile?.email || ''} disabled className="w-full rounded-lg border border-stone-100 px-4 py-2.5 text-sm bg-stone-50 text-stone-400 cursor-not-allowed" />
+                        <label className="text-xs font-medium text-stone-600 mb-1 block">
+                            Email
+                            {!profile?.email && <span className="text-brand-600 ml-1">(Add your email)</span>}
+                        </label>
+                        <input
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            className="w-full rounded-lg border border-stone-200 px-4 py-2.5 text-sm focus:ring-2 focus:ring-brand-200 focus:border-brand-400 outline-none"
+                            placeholder="you@example.com"
+                        />
                     </div>
                     <div>
-                        <label className="text-xs font-medium text-stone-600 mb-1 block">Phone</label>
-                        <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="10-digit mobile" className="w-full rounded-lg border border-stone-200 px-4 py-2.5 text-sm focus:ring-2 focus:ring-brand-200 focus:border-brand-400 outline-none" />
+                        <label className="text-xs font-medium text-stone-600 mb-1 block">
+                            Phone
+                            {!profile?.phone && <span className="text-brand-600 ml-1">(Add your phone)</span>}
+                        </label>
+                        <input
+                            value={phone}
+                            onChange={(e) => setPhone(e.target.value)}
+                            placeholder="10-digit mobile"
+                            className="w-full rounded-lg border border-stone-200 px-4 py-2.5 text-sm focus:ring-2 focus:ring-brand-200 focus:border-brand-400 outline-none"
+                        />
                     </div>
                     <div>
                         <label className="text-xs font-medium text-stone-600 mb-1 block">Member Since</label>
