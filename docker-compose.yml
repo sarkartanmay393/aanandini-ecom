@@ -7,6 +7,8 @@ services:
       dockerfile: apps/api/Dockerfile
     restart: always
     env_file: .env.production
+    volumes:
+      - uploads_data:/app/uploads
     networks:
       - aanandini-network
 
@@ -14,6 +16,8 @@ services:
     build:
       context: .
       dockerfile: apps/admin/Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://34.131.218.30:3002}
     restart: always
     env_file: .env.production
     networks:
@@ -23,6 +27,8 @@ services:
     build:
       context: .
       dockerfile: apps/web/Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://34.131.218.30:3002}
     restart: always
     env_file: .env.production
     networks:
@@ -33,7 +39,8 @@ services:
     restart: always
     ports:
       - "80:80"
-      - "443:443"
+      - "3001:3001"
+      - "3002:3002"
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile
       - caddy_data:/data
@@ -52,3 +59,4 @@ networks:
 volumes:
   caddy_data:
   caddy_config:
+  uploads_data:

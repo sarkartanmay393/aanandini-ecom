@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Search, SlidersHorizontal, ChevronDown } from 'lucide-react';
 import { Input } from '@aanandini/ui';
@@ -10,6 +10,14 @@ import * as api from '@/lib/api';
 type SortOption = 'newest' | 'price-asc' | 'price-desc' | 'name';
 
 export default function ProductsPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-stone-400">Loading...</div>}>
+            <ProductsContent />
+        </Suspense>
+    );
+}
+
+function ProductsContent() {
     const searchParams = useSearchParams();
     const [products, setProducts] = useState<api.Product[]>([]);
     const [categories, setCategories] = useState<api.Category[]>([]);
